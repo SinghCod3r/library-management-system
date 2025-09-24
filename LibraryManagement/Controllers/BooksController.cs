@@ -67,6 +67,7 @@ namespace LibraryManagement.Controllers
             {
                 _context.Add(book);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Book added successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(book);
@@ -104,6 +105,7 @@ namespace LibraryManagement.Controllers
                 {
                     _context.Update(book);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Book updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -147,6 +149,7 @@ namespace LibraryManagement.Controllers
             var book = await _context.Books.FindAsync(id);
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Book deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 

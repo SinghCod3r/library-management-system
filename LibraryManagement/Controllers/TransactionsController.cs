@@ -45,6 +45,12 @@ namespace LibraryManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> IssueBook([Bind("BookId,MemberId")] Transaction transaction)
         {
+            // Validate required fields
+            if (transaction.BookId == 0)
+                ModelState.AddModelError("BookId", "Please select a book");
+            if (transaction.MemberId == 0)
+                ModelState.AddModelError("MemberId", "Please select a member");
+                
             if (ModelState.IsValid)
             {
                 var book = await _context.Books.FindAsync(transaction.BookId);
@@ -60,6 +66,7 @@ namespace LibraryManagement.Controllers
                     
                     _context.Add(transaction);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Book issued successfully!";
                     return RedirectToAction(nameof(Index));
                 }
                 else

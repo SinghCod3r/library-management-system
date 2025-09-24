@@ -1,20 +1,33 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using LibraryManagement.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryManagement.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
     {
         _logger = logger;
+        _userManager = userManager;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return RedirectToAction("Index", "AdminDashboard");
+            }
+        }
         return View();
     }
 
