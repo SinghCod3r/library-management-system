@@ -1,0 +1,72 @@
+@model IEnumerable<LibraryManagement.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<div class="container mt-4">
+    <h1>Transactions</h1>
+
+    <p>
+        <a asp-action="IssueBook" class="btn btn-primary">Issue New Book</a>
+        <a asp-action="ActiveIssues" class="btn btn-info">View Active Issues</a>
+        <a asp-action="OverdueBooks" class="btn btn-warning">View Overdue Books</a>
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Fine</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Book.Title</td>
+                        <td>@item.Member.Name</td>
+                        <td>@item.IssueDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @(item.ReturnDate != null ? ((DateTime)item.ReturnDate).ToString("yyyy-MM-dd") : "-")
+                        </td>
+                        <td>
+                            @(item.Fine > 0 ? $"${item.Fine}" : "-")
+                        </td>
+                        <td>
+                            @if (item.ReturnDate == null)
+                            {
+                                if (DateTime.Now > item.DueDate)
+                                {
+                                    <span class="badge bg-danger">Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Returned</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.ReturnDate == null)
+                            {
+                                <a asp-action="ReturnBook" asp-route-id="@item.TransactionId" class="btn btn-sm btn-primary">Return</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

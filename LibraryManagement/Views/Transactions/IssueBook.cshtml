@@ -1,0 +1,43 @@
+@model LibraryManagement.Models.Transaction
+
+@{
+    ViewData["Title"] = "Issue Book";
+}
+
+<div class="container mt-4">
+    <h1>Issue Book</h1>
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="IssueBook">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="BookId" class="control-label">Book</label>
+                    <select asp-for="BookId" class="form-control" asp-items="ViewBag.BookId">
+                        <option value="">-- Select Book --</option>
+                    </select>
+                    <span asp-validation-for="BookId" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="MemberId" class="control-label">Member</label>
+                    <select asp-for="MemberId" class="form-control" asp-items="ViewBag.MemberId">
+                        <option value="">-- Select Member --</option>
+                    </select>
+                    <span asp-validation-for="MemberId" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <input type="submit" value="Issue Book" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

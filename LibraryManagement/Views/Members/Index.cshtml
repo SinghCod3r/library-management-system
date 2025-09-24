@@ -1,0 +1,60 @@
+@model IEnumerable<LibraryManagement.Models.Member>
+
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h1>Members</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form asp-action="Index" method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" name="searchString" class="form-control" placeholder="Search by name or email" value="@ViewData["CurrentFilter"]" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 text-right">
+        <a asp-action="Create" class="btn btn-success">Add New Member</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Email)</th>
+                <th>@Html.DisplayNameFor(model => model.MembershipType)</th>
+                <th>@Html.DisplayNameFor(model => model.ExpiryDate)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MembershipType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ExpiryDate)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MemberId" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.MemberId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.MemberId" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No members found. Please try a different search term or <a asp-action="Index">view all members</a>.
+    </div>
+}

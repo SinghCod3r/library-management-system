@@ -1,0 +1,81 @@
+@model IEnumerable<LibraryManagement.Models.Book>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<h1>Books</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form asp-action="Index" method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" name="searchString" class="form-control" placeholder="Search by title, author, or ISBN" value="@ViewData["CurrentFilter"]" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 text-right">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success">Add New Book</a>
+        }
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Title)</th>
+                <th>@Html.DisplayNameFor(model => model.Author)</th>
+                <th>@Html.DisplayNameFor(model => model.ISBN)</th>
+                <th>@Html.DisplayNameFor(model => model.Category)</th>
+                <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Author)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td>
+                        @if (item.IsAvailable)
+                        {
+                            <span class="badge badge-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Checked Out</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.BookId" class="btn btn-info btn-sm">Details</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-primary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.BookId" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                        @if (User.Identity.IsAuthenticated && item.IsAvailable)
+                        {
+                            <a asp-controller="Transactions" asp-action="IssueBook" asp-route-id="@item.BookId" class="btn btn-success btn-sm">Borrow</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No books found. Please try a different search term or <a asp-action="Index">view all books</a>.
+    </div>
+}

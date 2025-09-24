@@ -1,0 +1,52 @@
+@model IEnumerable<LibraryManagement.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Active Issues";
+}
+
+<div class="container mt-4">
+    <h1>Active Issues</h1>
+    
+    <p>
+        <a asp-action="Index" class="btn btn-secondary">Back to All Transactions</a>
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Book.Title</td>
+                        <td>@item.Member.Name</td>
+                        <td>@item.IssueDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (DateTime.Now > item.DueDate)
+                            {
+                                <span class="badge bg-danger">Overdue</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="ReturnBook" asp-route-id="@item.TransactionId" class="btn btn-sm btn-primary">Return</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
