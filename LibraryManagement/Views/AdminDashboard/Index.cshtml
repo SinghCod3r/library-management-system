@@ -42,6 +42,30 @@
     
     <div class="row">
         <div class="col-md-6 mb-4">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Movies</h5>
+                    <h2 class="display-4">@ViewBag.TotalMovies</h2>
+                    <p class="card-text">Movies in library</p>
+                    <a href="/Movies" class="btn btn-light">Manage Movies</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Available Movies</h5>
+                    <h2 class="display-4">@ViewBag.AvailableMovies</h2>
+                    <p class="card-text">Movies available for issue</p>
+                    <a href="/Movies" class="btn btn-light">View Movies</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
             <div class="card bg-warning">
                 <div class="card-body">
                     <h5 class="card-title">Active Issues</h5>

@@ -51,6 +51,7 @@ namespace LibraryManagement.Controllers
             {
                 _context.Add(member);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Member created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(member);
@@ -90,6 +91,7 @@ namespace LibraryManagement.Controllers
                 {
                     _context.Update(member);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Member updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -135,7 +137,27 @@ namespace LibraryManagement.Controllers
             var member = await _context.Members.FindAsync(id);
             _context.Members.Remove(member);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Member deleted successfully.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Members/Details/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var member = await _context.Members
+                .FirstOrDefaultAsync(m => m.MemberId == id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            return View(member);
         }
 
         private bool MemberExists(int id)

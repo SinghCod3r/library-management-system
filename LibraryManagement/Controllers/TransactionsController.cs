@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryManagement.Data;
 using LibraryManagement.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace LibraryManagement.Controllers
 {
@@ -14,30 +15,95 @@ namespace LibraryManagement.Controllers
     public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private const decimal FINE_PER_DAY = 10.0m;
 
-        public TransactionsController(ApplicationDbContext context)
+        public TransactionsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            var transactions = await _context.Transactions
+                        IQueryable<Transaction> transactionsQuery = _context.Transactions
                 .Include(t => t.Book)
-                .Include(t => t.Member)
-                .ToListAsync();
-                
+                .Include(t => t.Member);
+            if (!User.IsInRole("Admin"))
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    var member = await _context.Members.FirstOrDefaultAsync(m => m.Email == currentUser.Email);
+                    if (member != null)
+                    {
+                        transactionsQuery = transactionsQuery.Where(t => t.MemberId == member.MemberId);
+                    }
+                    else
+                    {
+                        transactionsQuery = transactionsQuery.Where(t => false);
+                    }
+                }
+            }
+
+            var transactions = await transactionsQuery.ToListAsync();
+
             return View(transactions);
         }
 
         // GET: Transactions/IssueBook
-        public IActionResult IssueBook()
+        public async Task<IActionResult> IssueBook(int? bookId = null)
         {
-            ViewData["BookId"] = new SelectList(_context.Books.Where(b => b.IsAvailable), "BookId", "Title");
-            ViewData["MemberId"] = new SelectList(_context.Members, "MemberId", "Name");
-            return View();
+            var isAdmin = User.IsInRole("Admin");
+            int? preselectedMemberId = null;
+            Book? preselectedBook = null;
+            Member? preselectedMember = null;
+
+            if (bookId.HasValue)
+            {
+                preselectedBook = await _context.Books.FirstOrDefaultAsync(b => b.BookId == bookId && b.IsAvailable);
+                if (preselectedBook == null)
+                {
+                    TempData["ErrorMessage"] = "Selected book is not available.";
+                    return RedirectToAction("Index", "Books");
+                }
+            }
+
+            if (!isAdmin)
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    preselectedMember = await _context.Members.FirstOrDefaultAsync(m => m.Email == currentUser.Email);
+                    if (preselectedMember != null)
+                    {
+                        preselectedMemberId = preselectedMember.MemberId;
+                    }
+                    else
+                    {
+                        // Auto-create a member profile for the logged-in user if none exists
+                        preselectedMember = new Member
+                        {
+                            Name = currentUser.Email!, // default name as email
+                            Email = currentUser.Email!,
+                            MembershipType = "Standard",
+                            ExpiryDate = DateTime.Now.AddYears(1)
+                        };
+                        _context.Members.Add(preselectedMember);
+                        await _context.SaveChangesAsync();
+                        preselectedMemberId = preselectedMember.MemberId;
+                        TempData["SuccessMessage"] = "A new member profile was created for your account.";
+                    }
+                }
+            }
+
+            ViewData["BookId"] = new SelectList(_context.Books.Where(b => b.IsAvailable), "BookId", "Title", bookId);
+            ViewData["MemberId"] = new SelectList(_context.Members, "MemberId", "Name", preselectedMemberId);
+            ViewBag.PreselectedBook = preselectedBook;
+            ViewBag.PreselectedMember = preselectedMember;
+
+            return View(new Transaction { BookId = bookId ?? 0, MemberId = preselectedMemberId ?? 0 });
         }
 
         // POST: Transactions/IssueBook

@@ -7,6 +7,14 @@
 <div class="container mt-4">
     <h1>Transactions</h1>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <p>
         <a asp-action="IssueBook" class="btn btn-primary">Issue New Book</a>
         <a asp-action="ActiveIssues" class="btn btn-info">View Active Issues</a>

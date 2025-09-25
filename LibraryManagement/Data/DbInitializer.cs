@@ -60,6 +60,22 @@ namespace LibraryManagement.Data
                 context.SaveChanges();
             }
 
+            // Add sample movies if none exist
+            if (!context.Movies.Any())
+            {
+                var movies = new Movie[]
+                {
+                    new Movie { Title = "Inception", Director = "Christopher Nolan", Category = "Sci-Fi", Year = 2010, IsAvailable = true },
+                    new Movie { Title = "The Godfather", Director = "Francis Ford Coppola", Category = "Crime", Year = 1972, IsAvailable = true },
+                    new Movie { Title = "The Shawshank Redemption", Director = "Frank Darabont", Category = "Drama", Year = 1994, IsAvailable = true }
+                };
+                foreach (var mv in movies)
+                {
+                    context.Movies.Add(mv);
+                }
+                context.SaveChanges();
+            }
+
             // Add sample members if none exist
             if (!context.Members.Any())
             {
@@ -73,6 +89,43 @@ namespace LibraryManagement.Data
                 {
                     context.Members.Add(m);
                 }
+                context.SaveChanges();
+            }
+
+            // Add sample transactions if none exist
+            if (!context.Transactions.Any())
+            {
+                var book1 = context.Books.FirstOrDefault();
+                var book2 = context.Books.Skip(1).FirstOrDefault();
+                var member1 = context.Members.FirstOrDefault();
+                var member2 = context.Members.Skip(1).FirstOrDefault();
+
+                if (book1 != null && member1 != null)
+                {
+                    book1.IsAvailable = false;
+                    context.Transactions.Add(new Transaction
+                    {
+                        BookId = book1.BookId,
+                        MemberId = member1.MemberId,
+                        IssueDate = DateTime.Now.AddDays(-10),
+                        DueDate = DateTime.Now.AddDays(4),
+                        Fine = 0
+                    });
+                }
+
+                if (book2 != null && member2 != null)
+                {
+                    book2.IsAvailable = false;
+                    context.Transactions.Add(new Transaction
+                    {
+                        BookId = book2.BookId,
+                        MemberId = member2.MemberId,
+                        IssueDate = DateTime.Now.AddDays(-20),
+                        DueDate = DateTime.Now.AddDays(-6),
+                        Fine = 0
+                    });
+                }
+
                 context.SaveChanges();
             }
         }

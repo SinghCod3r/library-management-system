@@ -24,6 +24,8 @@ namespace LibraryManagement.Controllers
             ViewBag.TotalBooks = await _context.Books.CountAsync();
             ViewBag.AvailableBooks = await _context.Books.CountAsync(b => b.IsAvailable);
             ViewBag.TotalMembers = await _context.Members.CountAsync();
+            ViewBag.TotalMovies = await _context.Movies.CountAsync();
+            ViewBag.AvailableMovies = await _context.Movies.CountAsync(m => m.IsAvailable);
             ViewBag.ActiveIssues = await _context.Transactions.CountAsync(t => t.ReturnDate == null);
             ViewBag.OverdueBooks = await _context.Transactions.CountAsync(t => t.ReturnDate == null && t.DueDate < System.DateTime.Today);
             

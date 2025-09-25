@@ -15,17 +15,33 @@
                 
                 <div class="form-group mb-3">
                     <label asp-for="BookId" class="control-label">Book</label>
-                    <select asp-for="BookId" class="form-control" asp-items="ViewBag.BookId">
-                        <option value="">-- Select Book --</option>
-                    </select>
+                    @if (ViewBag.PreselectedBook != null)
+                    {
+                        <p>@(((LibraryManagement.Models.Book)ViewBag.PreselectedBook).Title)</p>
+                        <input type="hidden" asp-for="BookId" />
+                    }
+                    else
+                    {
+                        <select asp-for="BookId" class="form-control" asp-items="ViewBag.BookId">
+                            <option value="">-- Select Book --</option>
+                        </select>
+                    }
                     <span asp-validation-for="BookId" class="text-danger"></span>
                 </div>
                 
                 <div class="form-group mb-3">
                     <label asp-for="MemberId" class="control-label">Member</label>
-                    <select asp-for="MemberId" class="form-control" asp-items="ViewBag.MemberId">
-                        <option value="">-- Select Member --</option>
-                    </select>
+                    @if (ViewBag.PreselectedMember != null)
+                    {
+                        <p>@(((LibraryManagement.Models.Member)ViewBag.PreselectedMember).Name)</p>
+                        <input type="hidden" asp-for="MemberId" />
+                    }
+                    else
+                    {
+                        <select asp-for="MemberId" class="form-control" asp-items="ViewBag.MemberId">
+                            <option value="">-- Select Member --</option>
+                        </select>
+                    }
                     <span asp-validation-for="MemberId" class="text-danger"></span>
                 </div>
                 
