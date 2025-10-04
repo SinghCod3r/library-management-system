@@ -1,0 +1,55 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Simple Library</h1>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Books</div>
+                <div class="card-body">
+                    <h5 class="card-title">Total Books: @Model.TotalBooks</h5>
+                    <p class="card-text">Available Books: @Model.AvailableBooks</p>
+                    <a asp-page="/Books/Index" class="btn btn-light">View Books</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Members</div>
+                <div class="card-body">
+                    <h5 class="card-title">Total Members: @Model.TotalMembers</h5>
+                    <a asp-page="/Members/Index" class="btn btn-light">View Members</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Transactions</div>
+                <div class="card-body">
+                    <h5 class="card-title">Active Transactions: @Model.ActiveTransactions</h5>
+                    <p class="card-text">Overdue Transactions: @Model.OverdueTransactions</p>
+                    <a asp-page="/Transactions/Index" class="btn btn-light">View Transactions</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">Quick Actions</div>
+                <div class="card-body text-center">
+                    <a asp-page="/Transactions/IssueBook" class="btn btn-primary btn-lg mx-2">Issue New Book</a>
+                    <a asp-page="/Members/Create" class="btn btn-success btn-lg mx-2">Add New Member</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

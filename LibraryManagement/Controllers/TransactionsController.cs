@@ -109,27 +109,40 @@ namespace LibraryManagement.Controllers
         // POST: Transactions/IssueBook
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IssueBook([Bind("BookId,MemberId")] Transaction transaction)
+        public async Task<IActionResult> IssueBook([Bind("BookId,MemberId,DueDate")] Transaction transaction)
         {
             // Validate required fields
             if (transaction.BookId == 0)
                 ModelState.AddModelError("BookId", "Please select a book");
             if (transaction.MemberId == 0)
                 ModelState.AddModelError("MemberId", "Please select a member");
-                
+
+            var today = DateTime.Today;
+            if (transaction.DueDate == default)
+            {
+                ModelState.AddModelError("DueDate", "Please choose a return date");
+            }
+            else if (transaction.DueDate < today)
+            {
+                ModelState.AddModelError("DueDate", "Return date cannot be before today");
+            }
+            else if (transaction.DueDate > today.AddDays(15))
+            {
+                ModelState.AddModelError("DueDate", "Return date cannot be more than 15 days from today");
+            }
+
             if (ModelState.IsValid)
             {
                 var book = await _context.Books.FindAsync(transaction.BookId);
                 if (book != null && book.IsAvailable)
                 {
                     transaction.IssueDate = DateTime.Now;
-                    transaction.DueDate = DateTime.Now.AddDays(14); // 2 weeks loan period
                     transaction.Fine = 0;
 
                     // Update book availability
                     book.IsAvailable = false;
                     _context.Update(book);
-                    
+
                     _context.Add(transaction);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Book issued successfully!";
@@ -140,7 +153,7 @@ namespace LibraryManagement.Controllers
                     ModelState.AddModelError("", "Book is not available for issue.");
                 }
             }
-            
+
             ViewData["BookId"] = new SelectList(_context.Books.Where(b => b.IsAvailable), "BookId", "Title", transaction.BookId);
             ViewData["MemberId"] = new SelectList(_context.Members, "MemberId", "Name", transaction.MemberId);
             return View(transaction);

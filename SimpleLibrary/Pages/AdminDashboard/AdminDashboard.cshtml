@@ -1,0 +1,43 @@
+@page
+@model SimpleLibrary.Pages.AdminDashboard.AdminDashboardModel
+@{ ViewData["Title"] = "Admin Dashboard"; }
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Welcome to the Admin Dashboard. Here you can manage library resources and user accounts.</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Books Management</h3>
+            </div>
+            <div class="card-body">
+                <p>Manage all books in the library, including adding new books, editing existing ones, and removing them.</p>
+                <a asp-page="/Books/Index" class="btn btn-primary">Manage Books</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Members Management</h3>
+            </div>
+            <div class="card-body">
+                <p>Oversee all registered library members, update their details, or manage their accounts.</p>
+                <a asp-page="/Members/Index" class="btn btn-primary">Manage Members</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Transactions Management</h3>
+            </div>
+            <div class="card-body">
+                <p>Handle all book borrowing and returning transactions, including overdue fines.</p>
+                <a asp-page="/Transactions/Index" class="btn btn-primary">Manage Transactions</a>
+            </div>
+        </div>
+    </div>
+</div>

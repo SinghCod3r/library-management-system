@@ -1,0 +1,56 @@
+@page
+@model SimpleLibrary.Pages.Transactions.ReturnBookModel
+
+@{
+    ViewData["Title"] = "Return Book";
+}
+
+<h1>Return Book</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Transaction Details</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Book:</dt>
+                    <dd class="col-sm-8">@Model.Transaction.Book?.Title</dd>
+                    
+                    <dt class="col-sm-4">Member:</dt>
+                    <dd class="col-sm-8">@Model.Transaction.Member?.Name</dd>
+                    
+                    <dt class="col-sm-4">Issue Date:</dt>
+                    <dd class="col-sm-8">@Model.Transaction.IssueDate.ToString("yyyy-MM-dd")</dd>
+                    
+                    <dt class="col-sm-4">Due Date:</dt>
+                    <dd class="col-sm-8">@Model.Transaction.DueDate.ToString("yyyy-MM-dd")</dd>
+                    
+                    <dt class="col-sm-4">Days Overdue:</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            var overdueDays = (DateTime.Today - Model.Transaction.DueDate).Days;
+                            var overdueText = overdueDays > 0 ? $"{overdueDays} days" : "Not overdue";
+                        }
+                        @overdueText
+                    </dd>
+                    
+                    <dt class="col-sm-4">Fine Amount:</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            var fineAmount = overdueDays > 0 ? overdueDays * 5 : 0;
+                        }
+                        @fineAmount.ToString("C")
+                    </dd>
+                </dl>
+                
+                <form method="post">
+                    <input type="hidden" asp-for="Transaction.Id" />
+                    <button type="submit" class="btn btn-success">Confirm Return</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

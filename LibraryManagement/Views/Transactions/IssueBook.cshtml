@@ -18,7 +18,7 @@
                     @if (ViewBag.PreselectedBook != null)
                     {
                         <p>@(((LibraryManagement.Models.Book)ViewBag.PreselectedBook).Title)</p>
-                        <input type="hidden" asp-for="BookId" />
+                        <input type="hidden" name="BookId" value="@(((LibraryManagement.Models.Book)ViewBag.PreselectedBook).BookId)" />
                     }
                     else
                     {
@@ -34,7 +34,8 @@
                     @if (ViewBag.PreselectedMember != null)
                     {
                         <p>@(((LibraryManagement.Models.Member)ViewBag.PreselectedMember).Name)</p>
-                        <input type="hidden" asp-for="MemberId" />
+                        <input type="hidden" name="MemberId" value="@(((LibraryManagement.Models.Member)ViewBag.PreselectedMember).MemberId)" />
+
                     }
                     else
                     {

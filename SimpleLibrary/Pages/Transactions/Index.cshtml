@@ -1,0 +1,52 @@
+@page
+@model SimpleLibrary.Pages.Transactions.IndexModel
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<h1>Transactions</h1>
+
+<p>
+    <a asp-page="./IssueBook" class="btn btn-primary">Issue New Book</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Fine</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Transactions)
+        {
+            <tr>
+            <td>@item.Book?.Title</td>
+            <td>@item.Member?.Name</td>
+            <td>@item.IssueDate.ToString("yyyy-MM-dd")</td>
+            <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+            <td>@(item.ReturnDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+            <td>@item.Fine.ToString("C")</td>
+            <td>
+                @if (item.ReturnDate == null)
+                {
+                    <span class="badge @(item.DueDate < DateTime.Today ? "bg-danger" : "bg-success")">
+                        @(item.DueDate < DateTime.Today ? "Overdue" : "Active")
+                    </span>
+                    <a asp-page="./ReturnBook" asp-route-id="@item.Id" class="btn btn-sm btn-warning ms-2">Return</a>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Returned</span>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
