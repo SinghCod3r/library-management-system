@@ -1,14 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using SimpleLibrary.Data;
-using Microsoft.AspNetCore.Identity;
 using SimpleLibrary.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connection = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connection, ServerVersion.AutoDetect(connection)));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
